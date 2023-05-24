@@ -2,7 +2,7 @@ const input = document.getElementById("task-input");
 const addBtn = document.getElementById("add-btn");
 const tasks = document.getElementById("tasks-list");
 
-let tasksArray = [];
+let tasksArray;
 if (localStorage.getItem("myTasks")) {
     tasksArray = JSON.parse(localStorage.getItem("myTasks"));
 } else {
@@ -29,34 +29,46 @@ function addTaskToArray() {
 
     localStorage.setItem("myTasks", JSON.stringify(tasksArray));
 
-    createTaskItem();
+    createTaskItem(newTask);
 }
 
-function createTaskItem() {
-    tasks.innerHTML = "";
-    tasksArray.forEach((obj, i) => {
-        let taskItem = document.createElement("li");
-        taskItem.classList.add("task");
-        taskItem.setAttribute("data-id", obj.id);
-        taskItem.innerText = obj.name;
-        tasks.appendChild(taskItem);
+function createTaskItem(task) {
+    let taskItem = document.createElement("li");
+    taskItem.classList.add("task");
+    taskItem.setAttribute("data-id", task.id);
+    taskItem.innerText = task.name;
 
-        let removeIcon = document.createElement("span");
-        removeIcon.innerHTML = "&#10006;";
-        taskItem.appendChild(removeIcon);
-        removeIcon.onclick = function (){deletefromlocalStorage(i)};
-    });
+    if (task.checked) {
+        taskItem.classList.add("checked");
+    }
 
-    tasks.onclick = function (e) {
-        if (e.target.tagName === "LI") {
-            e.target.classList.toggle("checked");
-        }
+    tasks.appendChild(taskItem);
+
+    let removeIcon = document.createElement("span");
+    removeIcon.innerHTML = "&#10060;";
+    taskItem.appendChild(removeIcon);
+    removeIcon.onclick = function () {
+        deletefromlocalStorage(task.id);
+    };
+
+    taskItem.onclick = function () {
+        taskItem.classList.toggle("checked");
+        task.checked = !task.checked;
+        localStorage.setItem("myTasks", JSON.stringify(tasksArray));
     };
 }
-createTaskItem();
 
-function deletefromlocalStorage(i) {
-    tasksArray.splice(i, 1);
+function deletefromlocalStorage(id) {
+    tasksArray = tasksArray.filter((task) => task.id !== id);
     localStorage.setItem("myTasks", JSON.stringify(tasksArray));
-    createTaskItem();
+    createTaskList();
 }
+
+function createTaskList() {
+    tasks.innerHTML = "";
+    tasksArray.forEach((task) => {
+        createTaskItem(task);
+    });
+}
+
+createTaskList();

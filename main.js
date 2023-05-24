@@ -45,7 +45,7 @@ function createTaskItem(task) {
     tasks.appendChild(taskItem);
 
     let removeIcon = document.createElement("span");
-    removeIcon.innerHTML = "&#10060;";
+    removeIcon.innerHTML = "&#10006;";
     taskItem.appendChild(removeIcon);
     removeIcon.onclick = function () {
         deletefromlocalStorage(task.id);
